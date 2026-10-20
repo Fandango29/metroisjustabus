@@ -1,0 +1,22 @@
+# Segredos e configuração local (RNF-10)
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+secrets/
+
+# Sistema operativo e editores
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Dependências e builds
+node_modules/
+dist/
+build/
+target/
+__pycache__/
+*.pyc
+.venv/
