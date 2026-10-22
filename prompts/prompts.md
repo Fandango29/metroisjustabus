@@ -1,7 +1,7 @@
-# Prompts — Compreensão do enunciado
+# Prompts — Milestone 1
 
 - **Ferramenta:** Claude Opus 5.5 (claude.ai)
-- **Autor dos prompts:** Diogo Santos, Bernardo Esperança, Tomas Neto
+- **Autor dos prompts:** Diogo Santos, Bernardo Esperança, Tomás Neto
 - **Contexto dado:** PDF do enunciado e ficheiro em desenvolvimento (Milestone_1)
 
 ---
@@ -29,25 +29,25 @@
 > Explica me mais concretamente o que é suposto ser entregue na Milestone 1
 
 ---
-## P-04 — Adicionar mias requisitos funcionais e não funcinais que não tenham sido identificados por nós
+## P-04 — Adicionar mais requisitos funcionais e não funcinais que não tenham sido identificados por nós
 
 - **Contexto:** PDF do enunciado em anexo e Ficheiro em desenvolvimento (Milestone_1)
 
-> Segundo o meu ficheiro e o enunciando do projeto que envio em anexo identifica-me os requisitos funcionais e não funcionais que não foram detetados por nós e identifica também o nivél de prioridade de cada um
+> Segundo o meu ficheiro e o enunciado do projeto que envio em anexo identifica-me os requisitos funcionais e não funcionais que não foram detetados por nós e identifica também o nivél de prioridade de cada um
 
 ---
 ## P-05 — Adicionar as Ambiguidades que não tenham sido identificadas por nós
 
 - **Contexto:** PDF do enunciado em anexo e Ficheiro em desenvolvimento (Milestone_1)
 
-> Segundo o meu ficheiro e o enunciando do projeto que envio em anexo identifica-me as ambiguidades que não foram detetados por nós
+> Segundo o meu ficheiro e o enunciado do projeto que envio em anexo identifica-me as ambiguidades que não foram detetados por nós
 
 ---
 ## P-06 — Divisão do enunciado em excertos
 
 - **Contexto:** PDF do enunciado em anexo e Ficheiro em desenvolvimento (Milestone_1)
 
-> De modo a ser mais facil identificar onde está cada requisito e ambiguidade no enunciado, propõe uma estrategia para a identificação dos requisitos e ambiguidades sem ser necessario trascrever todas as linhas do enunciado.
+> De modo a ser mais facil identificar onde está cada requisito e ambiguidade no enunciado, propõe uma estrategia para a identificação dos requisitos e ambiguidades sem ser necessario transcrever todas as linhas do enunciado.
 
 > Com base nessa estratégia faz me uma tabela de rastreabilidade de forma a ser facil de identificar cada requisito e ambiguidade no enunciado 
 
