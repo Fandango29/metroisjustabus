@@ -41,7 +41,7 @@ Projeto da unidade curricular **Engenharia de Software Automatizada** (2026/2027
 | Ambiguidades, informação em falta e pressupostos | Especificação, secção 5 |
 | Rastreabilidade ao enunciado | Especificação, secção 6, e coluna "Origem" de cada requisito |
 | Decomposição inicial em componentes | Especificação, secção 7 |
-| Evidência do uso de LLMs na análise, refinamento e validação | Especificação, secções 8 e 9, e pasta `prompts/` |
+| Evidência do uso de LLMs na análise, refinamento e validação | Especificação, secção 8, e pasta `prompts/` |
 
 ## Regras do grupo
 
