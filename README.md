@@ -45,7 +45,7 @@ Projeto da unidade curricular **Engenharia de Software Automatizada** (2026/2027
 
 ## Regras do grupo
 
-- **Todos os prompts usados no projeto ficam em `prompts/`**, seguindo o formato descrito em `prompts/README.md`.
+- **Todos os prompts usados no projeto ficam em `prompts/`**, seguindo o formato descrito em `prompts/prompts.md`.
 - **Nenhum segredo** (passwords, chaves, tokens) é colocado no repositório (RNF-10).
 - Fazer sempre `git pull` antes de começar a trabalhar.
 - Cada alteração relevante é feita num commit próprio, com uma mensagem clara.
