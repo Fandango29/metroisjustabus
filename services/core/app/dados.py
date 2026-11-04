@@ -1,4 +1,4 @@
-"""Dados de exemplo da rede, usados até existir base de dados (Fase 3)."""
+"""Dados de exemplo da rede, usados quando não há base de dados configurada (testes e pipeline)."""
 
 LINHAS = [
     {"id": "L1", "nome": "Estação Central - Hospital"},

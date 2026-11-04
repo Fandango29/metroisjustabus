@@ -4,7 +4,7 @@ import os
 
 from fastapi import FastAPI, HTTPException
 
-from app.dados import LINHAS, PARAGENS_POR_LINHA
+from app import repositorio
 
 app = FastAPI(title="MetroIsJustABus - Core", version="0.1.0")
 
@@ -24,12 +24,13 @@ def version():
 @app.get("/linhas")
 def listar_linhas():
     """RF-01: lista as linhas da rede."""
-    return LINHAS
+    return repositorio.obter_linhas()
 
 
 @app.get("/linhas/{linha_id}/paragens")
 def listar_paragens(linha_id: str):
     """RF-02: lista as paragens de uma linha, pela ordem do percurso."""
-    if linha_id not in PARAGENS_POR_LINHA:
+    paragens = repositorio.obter_paragens(linha_id)
+    if paragens is None:
         raise HTTPException(status_code=404, detail="Linha não encontrada")
-    return PARAGENS_POR_LINHA[linha_id]
+    return paragens
