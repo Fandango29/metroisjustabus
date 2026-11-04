@@ -1,0 +1,12 @@
+# Todos os ficheiros de texto com fins de linha LF (formato Linux, usado nos contentores)
+* text=auto eol=lf
+
+# Scripts exclusivos do Windows mantêm CRLF
+*.ps1 text eol=crlf
+*.cmd text eol=crlf
+*.bat text eol=crlf
+
+# Ficheiros binários
+*.pdf binary
+*.png binary
+*.jpg binary
