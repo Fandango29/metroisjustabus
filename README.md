@@ -49,3 +49,21 @@ Projeto da unidade curricular **Engenharia de Software Automatizada** (2026/2027
 - **Nenhum segredo** (passwords, chaves, tokens) é colocado no repositório (RNF-10).
 - Fazer sempre `git pull` antes de começar a trabalhar.
 - Cada alteração relevante é feita num commit próprio, com uma mensagem clara.
+
+## Decisões da Milestone 2
+
+| Decisão | Escolha |
+| --- | --- |
+| Linguagem e framework | Python 3.12 + FastAPI |
+| Testes | pytest |
+| Lint | ruff |
+| Base de dados | PostgreSQL 16 |
+| Contentores | Docker + Docker Compose |
+| Registo de imagens | GitHub Container Registry (GHCR) |
+| CI/CD | GitHub Actions com runner self-hosted |
+| Máquina do runner e do ambiente de dev |“Portátil do Diogo"|
+| Segredos | GitHub Secrets na pipeline; ficheiro `.env` local, fora do repositório |
+| Deploy em dev | Automático após pipeline verde, com smoke test ao `/health` e rollback para a versão anterior se falhar |
+
+
+Todos registam os prompts que usarem na pasta `prompts/`.
