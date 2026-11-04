@@ -1,0 +1,38 @@
+name: metroisjustabus-dev
+
+services:
+  core:
+    # Na pipeline (Fase 5), CORE_IMAGE aponta para a imagem do GHCR com o SHA do commit.
+    # Localmente, sem CORE_IMAGE, a imagem é construída a partir do código.
+    image: ${CORE_IMAGE:-metroisjustabus-core:local}
+    build:
+      context: ../../services/core
+      args:
+        APP_COMMIT_SHA: ${APP_COMMIT_SHA:-local}
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@core-db:5432/${POSTGRES_DB}
+    depends_on:
+      core-db:
+        condition: service_healthy
+    restart: unless-stopped
+
+  core-db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - core-db-dados:/var/lib/postgresql/data
+      - ./init-db:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
+
+volumes:
+  core-db-dados:
