@@ -54,7 +54,7 @@ Projeto da unidade curricular **Engenharia de Software Automatizada** (2026/2027
 
 | Decisão | Escolha |
 | --- | --- |
-| Linguagem e framework | Python 3.12 + FastAPI |
+| Linguagem e framework | Python 3.13 + FastAPI |
 | Testes | pytest |
 | Lint | ruff |
 | Base de dados | PostgreSQL 16 |
