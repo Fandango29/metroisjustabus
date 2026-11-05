@@ -25,6 +25,6 @@ TIPOS_BILHETE = [
         "preco_centimos": 1200,
         "validade_minutos": 43200,
         "viagens": 10,
-        "condicoes": "Dez viagens a usar no prazo de 30 dias.",
+        "condicoes": "Dez viagens a usar no prazo de 30 dias após a compra.",
     },
 ]
