@@ -8,7 +8,7 @@ cliente = TestClient(app)
 def test_rnf12_health_responde_ok():
     resposta = cliente.get("/health")
     assert resposta.status_code == 200
-    assert resposta.json() == {"status": "partido"}
+    assert resposta.json() == {"status": "ok"}
 
 
 def test_rnf17_version_devolve_sha_do_commit(monkeypatch):
