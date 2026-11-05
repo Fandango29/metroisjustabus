@@ -22,7 +22,7 @@ jobs:
     runs-on: self-hosted
     steps:
       - name: Checkout do código
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Instalar dependências (imagem de testes)
         run: docker build --target teste -t ${{ env.IMAGEM_TESTES }} services/core
@@ -44,7 +44,7 @@ jobs:
     runs-on: self-hosted
     steps:
       - name: Checkout do código
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Build da imagem
         run: >-
@@ -56,7 +56,7 @@ jobs:
 
       - name: Login no GHCR
         if: github.ref == 'refs/heads/main'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
