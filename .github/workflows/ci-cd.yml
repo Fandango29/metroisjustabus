@@ -3,6 +3,11 @@ name: CI/CD
 on:
   push:
   workflow_dispatch:
+    inputs:
+      simular_falha_smoke_test:
+        description: "Simular falha do smoke test (para demonstrar o rollback)"
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -73,3 +78,29 @@ jobs:
       - name: Publicar imagem (etiqueta dev-latest)
         if: github.ref == 'refs/heads/main'
         run: docker push ${{ env.IMAGEM }}:dev-latest
+
+  deploy-dev:
+    name: Deploy em desenvolvimento
+    needs: imagem
+    if: github.ref == 'refs/heads/main'
+    runs-on: self-hosted
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v5
+
+      - name: Login no GHCR
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Deploy, smoke test e rollback
+        shell: powershell
+        env:
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+        run: >-
+          ./deploy/dev/deploy.ps1
+          -Imagem ${{ env.IMAGEM }}
+          -Sha ${{ github.sha }}
+          ${{ inputs.simular_falha_smoke_test && '-SimularFalha' || '' }}
