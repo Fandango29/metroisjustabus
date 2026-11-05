@@ -1,0 +1,28 @@
+name: CI/CD Core
+
+on:
+  push:
+    paths:
+      - "services/core/**"
+      - "deploy/dev/**"
+      - ".github/workflows/ci-cd-core.yml"
+      - ".github/workflows/servico.yml"
+  workflow_dispatch:
+    inputs:
+      simular_falha_smoke_test:
+        description: "Simular falha do smoke test (para demonstrar o rollback)"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  core:
+    uses: ./.github/workflows/servico.yml
+    with:
+      servico: core
+      porta: 8000
+      simular_falha: ${{ inputs.simular_falha_smoke_test == true }}
+    secrets: inherit
