@@ -67,3 +67,4 @@ Projeto da unidade curricular **Engenharia de Software Automatizada** (2026/2027
 
 
 Todos registam os prompts que usarem na pasta `prompts/`.
+
