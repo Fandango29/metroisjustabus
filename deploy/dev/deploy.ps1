@@ -1,8 +1,11 @@
-# Deploy do ambiente de desenvolvimento, com smoke test e rollback automatico.
+# Deploy de um servico no ambiente de desenvolvimento, com smoke test e rollback automatico.
 # Usado pela pipeline (job "Deploy em desenvolvimento"). Corre a partir da pasta deploy/dev.
+# Cada servico e implantado sozinho, sem mexer nos outros (RNF-15).
 # Nota: texto sem acentos, porque o Windows PowerShell 5.1 nao le bem UTF-8 sem BOM.
 
 param(
+    [Parameter(Mandatory = $true)] [ValidateSet("core", "bilhetes")] [string] $Servico,
+    [Parameter(Mandatory = $true)] [int] $Porta,
     [Parameter(Mandatory = $true)] [string] $Imagem,
     [Parameter(Mandatory = $true)] [string] $Sha,
     [switch] $SimularFalha,
@@ -13,8 +16,9 @@ param(
 $ErrorActionPreference = "Continue"
 Set-Location $PSScriptRoot
 
-$Contentor = "metroisjustabus-dev-core-1"
-$UrlBase = "http://localhost:8000"
+$Contentor = "metroisjustabus-dev-$Servico-1"
+$UrlBase = "http://localhost:$Porta"
+$VariavelImagem = "$($Servico.ToUpper())_IMAGE"
 
 # Corre um comando docker e falha o script se o comando falhar
 function Invoke-Docker {
@@ -24,18 +28,19 @@ function Invoke-Docker {
     }
 }
 
-# Smoke test: /health responde ok e /version mostra o SHA esperado
+# Smoke test: /health responde ok e /version mostra o servico e o SHA esperados
 function Test-Servico {
     param([string] $ShaEsperado, [string] $CaminhoHealth)
     for ($i = 1; $i -le $Tentativas; $i++) {
         try {
             $health = Invoke-RestMethod -Uri "$UrlBase$CaminhoHealth" -TimeoutSec 5
             $versao = Invoke-RestMethod -Uri "$UrlBase/version" -TimeoutSec 5
-            if ($health.status -eq "ok" -and $versao.commit -eq $ShaEsperado) {
-                Write-Host "Smoke test OK (tentativa $i): versao $($versao.commit)"
+            $ok = $health.status -eq "ok" -and $versao.servico -eq $Servico -and $versao.commit -eq $ShaEsperado
+            if ($ok) {
+                Write-Host "Smoke test OK (tentativa $i): $Servico na versao $($versao.commit)"
                 return $true
             }
-            Write-Host "Tentativa ${i}: resposta inesperada (commit $($versao.commit))"
+            Write-Host "Tentativa ${i}: resposta inesperada ($($versao.servico), $($versao.commit))"
         } catch {
             Write-Host "Tentativa ${i}: o servico ainda nao responde ($($_.Exception.Message))"
         }
@@ -49,7 +54,7 @@ $ImagemAnterior = docker ps -a --filter "name=^$Contentor$" --format "{{.Image}}
 if ($ImagemAnterior) {
     Write-Host "Versao atualmente em execucao: $ImagemAnterior"
 } else {
-    Write-Host "Nao ha nenhuma versao em execucao (primeiro deploy)."
+    Write-Host "Nao ha nenhuma versao de $Servico em execucao (primeiro deploy)."
 }
 
 # 2. Criar o .env a partir do segredo da pipeline (nunca vem do repositorio)
@@ -62,12 +67,12 @@ Set-Content -Path ".env" -Encoding Ascii -Value @(
     "POSTGRES_DB=core"
 )
 
-# 3. Implantar a nova versao (a imagem publicada no GHCR, sem a reconstruir)
+# 3. Implantar so este servico, com a imagem publicada no GHCR (sem a reconstruir)
 $ImagemNova = "${Imagem}:${Sha}"
-$env:CORE_IMAGE = $ImagemNova
+Set-Item -Path "env:$VariavelImagem" -Value $ImagemNova
 Write-Host "A implantar $ImagemNova"
-Invoke-Docker compose pull core
-Invoke-Docker compose up -d --no-build
+Invoke-Docker compose pull $Servico
+Invoke-Docker compose up -d --no-build $Servico
 
 # 4. Smoke test
 $CaminhoHealth = "/health"
@@ -81,14 +86,14 @@ if (Test-Servico -ShaEsperado $Sha -CaminhoHealth $CaminhoHealth) {
     exit 0
 }
 
-# 5. Rollback para a versao anterior
+# 5. Rollback para a versao anterior deste servico
 Write-Host "::error::O smoke test falhou para $ImagemNova"
 if (-not $ImagemAnterior) {
-    Write-Host "::error::Nao ha versao anterior para repor."
+    Write-Host "::error::Nao ha versao anterior de $Servico para repor."
     exit 1
 }
 Write-Host "A repor a versao anterior: $ImagemAnterior"
-$env:CORE_IMAGE = $ImagemAnterior
-Invoke-Docker compose up -d --no-build core
+Set-Item -Path "env:$VariavelImagem" -Value $ImagemAnterior
+Invoke-Docker compose up -d --no-build $Servico
 Write-Host "::warning::Rollback concluido. Em execucao: $ImagemAnterior"
 exit 1

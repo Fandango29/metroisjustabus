@@ -2,7 +2,7 @@ name: metroisjustabus-dev
 
 services:
   core:
-    # Na pipeline (Fase 5), CORE_IMAGE aponta para a imagem do GHCR com o SHA do commit.
+    # Na pipeline, CORE_IMAGE aponta para a imagem do GHCR com o SHA do commit.
     # Localmente, sem CORE_IMAGE, a imagem é construída a partir do código.
     image: ${CORE_IMAGE:-metroisjustabus-core:local}
     build:
@@ -16,6 +16,17 @@ services:
     depends_on:
       core-db:
         condition: service_healthy
+    restart: unless-stopped
+
+  bilhetes:
+    # Na pipeline, BILHETES_IMAGE aponta para a imagem do GHCR com o SHA do commit.
+    image: ${BILHETES_IMAGE:-metroisjustabus-bilhetes:local}
+    build:
+      context: ../../services/bilhetes
+      args:
+        APP_COMMIT_SHA: ${APP_COMMIT_SHA:-local}
+    ports:
+      - "8001:8000"
     restart: unless-stopped
 
   core-db:
