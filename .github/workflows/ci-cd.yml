@@ -1,0 +1,75 @@
+name: CI/CD
+
+on:
+  push:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+env:
+  IMAGEM: ghcr.io/fandango29/metroisjustabus-core
+  IMAGEM_TESTES: metroisjustabus-core-testes:${{ github.sha }}
+
+defaults:
+  run:
+    shell: cmd
+
+jobs:
+  testes:
+    name: Lint e testes
+    runs-on: self-hosted
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      - name: Instalar dependências (imagem de testes)
+        run: docker build --target teste -t ${{ env.IMAGEM_TESTES }} services/core
+
+      - name: Lint (ruff)
+        run: docker run --rm ${{ env.IMAGEM_TESTES }} ruff check .
+
+      - name: Testes (pytest)
+        run: docker run --rm ${{ env.IMAGEM_TESTES }} pytest -v
+
+      - name: Remover imagem de testes
+        if: always()
+        continue-on-error: true
+        run: docker rmi ${{ env.IMAGEM_TESTES }}
+
+  imagem:
+    name: Build e publicação da imagem
+    needs: testes
+    runs-on: self-hosted
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      - name: Build da imagem
+        run: >-
+          docker build
+          --build-arg APP_COMMIT_SHA=${{ github.sha }}
+          --label org.opencontainers.image.source=https://github.com/${{ github.repository }}
+          -t ${{ env.IMAGEM }}:${{ github.sha }}
+          services/core
+
+      - name: Login no GHCR
+        if: github.ref == 'refs/heads/main'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publicar imagem (etiqueta SHA)
+        if: github.ref == 'refs/heads/main'
+        run: docker push ${{ env.IMAGEM }}:${{ github.sha }}
+
+      - name: Etiquetar como dev-latest
+        if: github.ref == 'refs/heads/main'
+        run: docker tag ${{ env.IMAGEM }}:${{ github.sha }} ${{ env.IMAGEM }}:dev-latest
+
+      - name: Publicar imagem (etiqueta dev-latest)
+        if: github.ref == 'refs/heads/main'
+        run: docker push ${{ env.IMAGEM }}:dev-latest
