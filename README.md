@@ -10,7 +10,7 @@ Projeto da unidade curricular **Engenharia de Software Automatizada** (2026/2027
 | Marco | Data | Estado | Onde está |
 | --- | --- | --- | --- |
 | Milestone 1 — Requisitos | 27/10/2026 | Entregue | `docs/requisitos/`, `prompts/prompts.md` |
-| Milestone 2 — Pipeline CI/CDE/CD | 17/11/2026 | Implementada | `.github/workflows/`, `services/`, `deploy/`, `docs/evidencias/m2/`, `prompts/prompts-m2.md` |
+| Milestone 2 — Pipeline CI/CDE/CD | 17/11/2026 | Implementada | `.github/workflows/`, `services/`, `deploy/`, `prompts/prompts-m2.md` |
 | Entrega final | 11/12/2026 | Por iniciar | — |
 
 ## Estrutura do repositório
@@ -30,8 +30,7 @@ Projeto da unidade curricular **Engenharia de Software Automatizada** (2026/2027
 │   └── .env.example                   modelo das variáveis de ambiente (sem valores reais)
 ├── docs/
 │   ├── enunciado/                     enunciado original do projeto
-│   ├── requisitos/                    especificação de requisitos (Milestone 1)
-│   └── evidencias/m2/                 capturas de ecrã que provam os requisitos da Milestone 2
+│   └── requisitos/                    especificação de requisitos (Milestone 1)
 ├── prompts/
 │   ├── prompts.md                     prompts usados na Milestone 1
 │   └── prompts-m2.md                  prompts usados na Milestone 2, com erros e correções
@@ -149,18 +148,18 @@ Depois, `http://localhost:8000/docs` (Core) e `http://localhost:8001/docs` (Bilh
 
 Na máquina do runner, o ambiente de dev é gerido pela pipeline. Correr lá o `docker compose up --build` substitui a versão implantada pela versão local até ao próximo push.
 
-### Requisitos da M2 e evidência
+### Requisitos da M2
 
-| Requisito do enunciado | Como está cumprido | Evidência |
-| --- | --- | --- |
-| 1 — Build automático a partir do repositório | `on: push` nos workflows | `docs/evidencias/m2/` |
-| 2 — Testes automáticos | Job "Lint e testes" (pytest); um teste partido bloqueia o build e o deploy | `docs/evidencias/m2/` |
-| 3 — Verificações de qualidade | ruff no job "Lint e testes" | `docs/evidencias/m2/` |
-| 4 — Aplicação em contentor | Dockerfile multi-etapa e docker-compose | `docs/evidencias/m2/` |
-| 5 — Artefacto versionado | Imagens no GHCR com a etiqueta do SHA do commit | `docs/evidencias/m2/` |
-| 6 — Deploy automático em dev | Job de deploy com smoke test e rollback | `docs/evidencias/m2/` |
+| Requisito do enunciado | Como está cumprido |
+| --- | --- |
+| 1 — Build automático a partir do repositório | `on: push` nos workflows |
+| 2 — Testes automáticos | Job "Lint e testes" (pytest); um teste partido bloqueia o build e o deploy |
+| 3 — Verificações de qualidade | ruff no job "Lint e testes" |
+| 4 — Aplicação em contentor | Dockerfile multi-etapa e docker-compose |
+| 5 — Artefacto versionado | Imagens no GHCR com a etiqueta do SHA do commit |
+| 6 — Deploy automático em dev | Job de deploy com smoke test e rollback |
 
-O índice das capturas de ecrã, com o que cada uma mostra, está em [`docs/evidencias/m2/README.md`](docs/evidencias/m2/README.md).
+A execução de cada pipeline, incluindo as provas do bloqueio de código partido e do rollback, fica registada no separador Actions do repositório.
 
 ### Requisitos da especificação cobertos na M2
 
