@@ -6,7 +6,7 @@ from fastapi import FastAPI, HTTPException
 
 from app import repositorio
 
-app = FastAPI(title="MetroIsJustABus - Core", version="0.1.0")
+app = FastAPI(title="MetroIsJustABus - Core", version="0.1.1")
 
 
 @app.get("/health")
