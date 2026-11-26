@@ -1,1 +1,2 @@
 tarefa,requisitos,responsavel,agente,inicio,fim,iteracoes,autonomia,defeitos_pipeline,defeitos_revisao,retrabalho,notas
+2,arquitetura;RF-13;RF-50;RF-51,Diogo,Claude Code,2026-11-26 15:10,2026-11-26 15:35,1,alta,0,0,,"Agente confirmou as versões das imagens antes de as usar e evitou imprimir segredos; avisou que o Keycloak em start-dev não guarda dados"

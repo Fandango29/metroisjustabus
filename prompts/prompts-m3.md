@@ -232,3 +232,23 @@ A IA criou o documento "Plano da entrega final", com o calendário, a infraestru
 - Web App em React, agente Claude Code (P-03).
 - Pull requests com 1 aprovação, ao contrário da M2 (P-07).
 - Cada membro trabalha no seu computador (P-23).
+
+---
+
+## Sessão 4 — 26/11/2026: primeira tarefa com o Claude Code (issue #2)
+
+- **Ferramenta:** Claude Code 2.1.332, modelo Opus 5.5, conta Claude Pro, em plan mode e depois com aprovação manual de cada alteração
+
+### P-27 — RabbitMQ e Keycloak no ambiente de dev
+
+**Prompt:**
+> Lê o CLAUDE.md. Tarefa: issue #2 — acrescentar o RabbitMQ e o Keycloak ao ambiente de dev em deploy/dev/docker-compose.yml. *[seguido dos requisitos, restrições e verificação, conforme a issue #2]*
+
+**Resposta (resumo):**
+- Apresentou um plano: dois serviços novos e um volume no `docker-compose.yml`, e as variáveis novas no `.env.example`.
+- Confirmou com `docker manifest inspect` que as versões das imagens existiam antes de as escrever.
+- Usou `${VAR:-}` para não partir o `deploy.ps1`, e `hostname: rabbitmq` para os dados persistirem.
+- Validou o ficheiro sem imprimir os segredos do `.env`.
+- Assinalou que o Keycloak em `start-dev` não guarda dados.
+
+**Ação da equipa:** Aceite. O plano foi lido antes de aprovado, e cada alteração e cada comando foram aprovados um a um. Testes manuais: RabbitMQ healthy, logins no RabbitMQ e no Keycloak, persistência da fila, Core e Bilhetes a responder. O aviso sobre o Keycloak foi aceite sem alterações: o realm vai ser exportado para o repositório (tarefa do Tomás).
