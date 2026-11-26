@@ -2,7 +2,7 @@
 
 <!-- Uma ou duas frases. -->
 
-Fecha #<!-- número da issue -->
+Closes #<!-- número da issue -->
 
 ## Requisitos
 
