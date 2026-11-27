@@ -36,6 +36,7 @@ Regras da arquitetura:
 - Web App: React com Vite, ESLint, Playwright.
 - Docker com Dockerfile em três etapas (`base`, `teste`, `final`) e Docker Compose.
 - GitHub Actions com runners self-hosted; imagens no GHCR (`ghcr.io/fandango29/metroisjustabus-<serviço>`).
+- A pipeline (`servico.yml`) corre na VM Linux `metro-dev` (runner `[self-hosted, dev]`, `shell: bash`); o deploy de dev usa `deploy/dev/deploy.sh`. O `deploy/dev/deploy.ps1` mantém-se para uso em Windows.
 
 ## Comandos
 
