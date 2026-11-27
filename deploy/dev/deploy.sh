@@ -120,6 +120,8 @@ printf '%s\n' \
     "POSTGRES_USER=core" \
     "POSTGRES_PASSWORD=${POSTGRES_PASSWORD}" \
     "POSTGRES_DB=core" >.env
+# Só o utilizador do runner pode ler o .env, porque contém a password
+chmod 600 .env
 
 # 3. Implantar só este serviço, com a imagem publicada no GHCR (sem a reconstruir)
 IMAGEM_NOVA="${IMAGEM}:${SHA}"
