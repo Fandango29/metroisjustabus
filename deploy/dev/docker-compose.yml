@@ -29,6 +29,23 @@ services:
       - "8001:8000"
     restart: unless-stopped
 
+  notificacoes:
+    # Na pipeline, NOTIFICACOES_IMAGE aponta para a imagem do GHCR com o SHA do commit.
+    image: ${NOTIFICACOES_IMAGE:-metroisjustabus-notificacoes:local}
+    build:
+      context: ../../services/notificacoes
+      args:
+        APP_COMMIT_SHA: ${APP_COMMIT_SHA:-local}
+    ports:
+      - "8002:8000"
+    environment:
+      # Ainda não usado pelo código: fica pronto para as subscrições (onda 2).
+      DATABASE_URL: postgresql://${NOTIFICACOES_DB_USER:-}:${NOTIFICACOES_DB_PASSWORD:-}@notificacoes-db:5432/${NOTIFICACOES_DB_NAME:-}
+    depends_on:
+      notificacoes-db:
+        condition: service_healthy
+    restart: unless-stopped
+
   core-db:
     image: postgres:16
     environment:
@@ -38,6 +55,25 @@ services:
     volumes:
       - core-db-dados:/var/lib/postgresql/data
       - ./init-db:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
+
+  notificacoes-db:
+    # Base de dados só das Notificações: nenhum outro serviço a lê.
+    image: postgres:16
+    environment:
+      # Valor vazio por omissão: nos deploys do Core e do Bilhetes estas variáveis podem faltar
+      # no .env e o compose não pode falhar por isso.
+      POSTGRES_USER: ${NOTIFICACOES_DB_USER:-}
+      POSTGRES_PASSWORD: ${NOTIFICACOES_DB_PASSWORD:-}
+      POSTGRES_DB: ${NOTIFICACOES_DB_NAME:-}
+    volumes:
+      - notificacoes-db-dados:/var/lib/postgresql/data
+      - ./init-db-notificacoes:/docker-entrypoint-initdb.d:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
       interval: 5s
@@ -81,4 +117,5 @@ services:
 
 volumes:
   core-db-dados:
+  notificacoes-db-dados:
   rabbitmq-dados:
