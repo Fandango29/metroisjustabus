@@ -116,6 +116,9 @@ fi
 if [[ -z "${POSTGRES_PASSWORD:-}" ]]; then
     erro "O segredo POSTGRES_PASSWORD não está definido."
 fi
+if [[ "$SERVICO" == bilhetes && -z "${BILHETES_DB_PASSWORD:-}" ]]; then
+    erro "O segredo BILHETES_DB_PASSWORD não está definido."
+fi
 if [[ "$SERVICO" == notificacoes && -z "${NOTIFICACOES_DB_PASSWORD:-}" ]]; then
     erro "O segredo NOTIFICACOES_DB_PASSWORD não está definido."
 fi
@@ -123,6 +126,14 @@ printf '%s\n' \
     "POSTGRES_USER=core" \
     "POSTGRES_PASSWORD=${POSTGRES_PASSWORD}" \
     "POSTGRES_DB=core" >.env
+# A password da base do Bilhetes é escrita sempre que o segredo existe, para que o
+# deploy de outro serviço não a apague do .env
+if [[ -n "${BILHETES_DB_PASSWORD:-}" ]]; then
+    printf '%s\n' \
+        "BILHETES_DB_USER=bilhetes" \
+        "BILHETES_DB_PASSWORD=${BILHETES_DB_PASSWORD}" \
+        "BILHETES_DB_NAME=bilhetes" >>.env
+fi
 # A password da base das Notificações é escrita sempre que o segredo existe, para que o
 # deploy de outro serviço não a apague do .env
 if [[ -n "${NOTIFICACOES_DB_PASSWORD:-}" ]]; then
