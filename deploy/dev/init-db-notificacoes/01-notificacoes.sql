@@ -1,0 +1,5 @@
+-- Estrutura da base de dados do serviço Notificações.
+--
+-- A base é criada vazia pelo contentor (variável POSTGRES_DB = NOTIFICACOES_DB_NAME).
+-- As tabelas de subscrições, preferências e eventos processados chegam na onda 2
+-- (RF-52 a RF-54, RF-60 a RF-62) e são acrescentadas aqui.

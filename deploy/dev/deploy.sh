@@ -5,7 +5,7 @@
 # Mesmo comportamento do deploy.ps1 (versão para Windows).
 #
 # Uso:
-#   ./deploy.sh --servico core|bilhetes --porta <n> --imagem <imagem> --sha <sha>
+#   ./deploy.sh --servico core|bilhetes|notificacoes --porta <n> --imagem <imagem> --sha <sha>
 #               [--simular-falha] [--tentativas <n>] [--intervalo <segundos>]
 
 set -euo pipefail
@@ -57,8 +57,8 @@ done
 [[ -n "$IMAGEM" ]] || erro "Falta a opção obrigatória --imagem."
 [[ -n "$SHA" ]] || erro "Falta a opção obrigatória --sha."
 case "$SERVICO" in
-    core | bilhetes) ;;
-    *) erro "Serviço inválido: '$SERVICO' (valores aceites: core, bilhetes)." ;;
+    core | bilhetes | notificacoes) ;;
+    *) erro "Serviço inválido: '$SERVICO' (valores aceites: core, bilhetes, notificacoes)." ;;
 esac
 e_inteiro "$PORTA" || erro "Porta inválida: '$PORTA' (tem de ser um número inteiro)."
 e_inteiro "$TENTATIVAS" || erro "Número de tentativas inválido: '$TENTATIVAS'."
@@ -116,10 +116,21 @@ fi
 if [[ -z "${POSTGRES_PASSWORD:-}" ]]; then
     erro "O segredo POSTGRES_PASSWORD não está definido."
 fi
+if [[ "$SERVICO" == notificacoes && -z "${NOTIFICACOES_DB_PASSWORD:-}" ]]; then
+    erro "O segredo NOTIFICACOES_DB_PASSWORD não está definido."
+fi
 printf '%s\n' \
     "POSTGRES_USER=core" \
     "POSTGRES_PASSWORD=${POSTGRES_PASSWORD}" \
     "POSTGRES_DB=core" >.env
+# A password da base das Notificações é escrita sempre que o segredo existe, para que o
+# deploy de outro serviço não a apague do .env
+if [[ -n "${NOTIFICACOES_DB_PASSWORD:-}" ]]; then
+    printf '%s\n' \
+        "NOTIFICACOES_DB_USER=notificacoes" \
+        "NOTIFICACOES_DB_PASSWORD=${NOTIFICACOES_DB_PASSWORD}" \
+        "NOTIFICACOES_DB_NAME=notificacoes" >>.env
+fi
 # Só o utilizador do runner pode ler o .env, porque contém a password
 chmod 600 .env
 

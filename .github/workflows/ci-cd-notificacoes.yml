@@ -1,0 +1,28 @@
+name: CI/CD Notificações
+
+on:
+  push:
+    paths:
+      - "services/notificacoes/**"
+      - "deploy/dev/**"
+      - ".github/workflows/ci-cd-notificacoes.yml"
+      - ".github/workflows/servico.yml"
+  workflow_dispatch:
+    inputs:
+      simular_falha_smoke_test:
+        description: "Simular falha do smoke test (para demonstrar o rollback)"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  notificacoes:
+    uses: ./.github/workflows/servico.yml
+    with:
+      servico: notificacoes
+      porta: 8002
+      simular_falha: ${{ inputs.simular_falha_smoke_test == true }}
+    secrets: inherit
