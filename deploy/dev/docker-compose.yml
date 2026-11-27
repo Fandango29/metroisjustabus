@@ -27,6 +27,11 @@ services:
         APP_COMMIT_SHA: ${APP_COMMIT_SHA:-local}
     ports:
       - "8001:8000"
+    environment:
+      DATABASE_URL: postgresql://${BILHETES_DB_USER:-}:${BILHETES_DB_PASSWORD:-}@bilhetes-db:5432/${BILHETES_DB_NAME:-}
+    depends_on:
+      bilhetes-db:
+        condition: service_healthy
     restart: unless-stopped
 
   notificacoes:
@@ -55,6 +60,25 @@ services:
     volumes:
       - core-db-dados:/var/lib/postgresql/data
       - ./init-db:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
+
+  bilhetes-db:
+    # Base de dados só do Bilhetes: nenhum outro serviço a lê.
+    image: postgres:16
+    environment:
+      # Valor vazio por omissão: nos deploys do Core e das Notificações estas variáveis podem
+      # faltar no .env e o compose não pode falhar por isso.
+      POSTGRES_USER: ${BILHETES_DB_USER:-}
+      POSTGRES_PASSWORD: ${BILHETES_DB_PASSWORD:-}
+      POSTGRES_DB: ${BILHETES_DB_NAME:-}
+    volumes:
+      - bilhetes-db-dados:/var/lib/postgresql/data
+      - ./init-db-bilhetes:/docker-entrypoint-initdb.d:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
       interval: 5s
@@ -117,5 +141,6 @@ services:
 
 volumes:
   core-db-dados:
+  bilhetes-db-dados:
   notificacoes-db-dados:
   rabbitmq-dados:
