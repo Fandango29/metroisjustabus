@@ -51,7 +51,7 @@ services:
     # Sem isto, ao recriar o contentor, os dados do volume deixavam de ser usados.
     hostname: rabbitmq
     environment:
-      # Valor vazio por omissão: o deploy.ps1 só escreve POSTGRES_* no .env
+      # Valor vazio por omissão: o deploy.sh (e o deploy.ps1) só escrevem POSTGRES_* no .env
       # e o compose não pode falhar quando estas variáveis faltam.
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER:-}
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS:-}
