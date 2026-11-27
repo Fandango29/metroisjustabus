@@ -100,6 +100,7 @@ jobs:
         shell: bash
         env:
           POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          NOTIFICACOES_DB_PASSWORD: ${{ secrets.NOTIFICACOES_DB_PASSWORD }}
         run: >-
           ./deploy/dev/deploy.sh
           --servico ${{ inputs.servico }}
