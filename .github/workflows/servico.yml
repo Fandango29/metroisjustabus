@@ -20,12 +20,12 @@ env:
 
 defaults:
   run:
-    shell: cmd
+    shell: bash
 
 jobs:
   testes:
     name: Lint e testes
-    runs-on: self-hosted
+    runs-on: [self-hosted, dev]
     steps:
       - name: Checkout do código
         uses: actions/checkout@v5
@@ -47,7 +47,7 @@ jobs:
   imagem:
     name: Build e publicação da imagem
     needs: testes
-    runs-on: self-hosted
+    runs-on: [self-hosted, dev]
     steps:
       - name: Checkout do código
         uses: actions/checkout@v5
@@ -84,7 +84,7 @@ jobs:
     name: Deploy em desenvolvimento
     needs: imagem
     if: github.ref == 'refs/heads/main'
-    runs-on: self-hosted
+    runs-on: [self-hosted, dev]
     steps:
       - name: Checkout do código
         uses: actions/checkout@v5
@@ -97,13 +97,13 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Deploy, smoke test e rollback
-        shell: powershell
+        shell: bash
         env:
           POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
         run: >-
-          ./deploy/dev/deploy.ps1
-          -Servico ${{ inputs.servico }}
-          -Porta ${{ inputs.porta }}
-          -Imagem ${{ env.IMAGEM }}
-          -Sha ${{ github.sha }}
-          ${{ inputs.simular_falha && '-SimularFalha' || '' }}
+          ./deploy/dev/deploy.sh
+          --servico ${{ inputs.servico }}
+          --porta ${{ inputs.porta }}
+          --imagem ${{ env.IMAGEM }}
+          --sha ${{ github.sha }}
+          ${{ inputs.simular_falha && '--simular-falha' || '' }}
