@@ -16,9 +16,10 @@ on:
       comando_lint:
         type: string
         default: ruff check .
+      # Mede a cobertura da pasta app/ e falha abaixo de 70% (RNF-18)
       comando_testes:
         type: string
-        default: pytest -v
+        default: pytest -v --cov=app --cov-report=term-missing --cov-fail-under=70
 
 env:
   IMAGEM: ghcr.io/fandango29/metroisjustabus-${{ inputs.servico }}
