@@ -1,0 +1,91 @@
+{
+  "realm": "metroisjustabus",
+  "displayName": "MetroIsJustABus",
+  "enabled": true,
+  "sslRequired": "external",
+  "registrationAllowed": true,
+  "registrationEmailAsUsername": true,
+  "loginWithEmailAllowed": true,
+  "duplicateEmailsAllowed": false,
+  "resetPasswordAllowed": false,
+  "rememberMe": false,
+  "verifyEmail": false,
+  "editUsernameAllowed": false,
+  "roles": {
+    "realm": [
+      {
+        "name": "passageiro",
+        "description": "Passageiro: compra e valida bilhetes, gere subscrições (papel por omissão das contas novas)"
+      },
+      {
+        "name": "staff",
+        "description": "Staff da operadora: gere a rede, os horários e as perturbações (A-18)"
+      },
+      {
+        "name": "administrador",
+        "description": "Administrador: gere as contas de staff (A-18)",
+        "composite": true,
+        "composites": {
+          "client": {
+            "realm-management": ["view-users", "query-users", "manage-users"]
+          }
+        }
+      },
+      {
+        "name": "offline_access",
+        "description": "${role_offline-access}"
+      },
+      {
+        "name": "uma_authorization",
+        "description": "${role_uma_authorization}"
+      },
+      {
+        "name": "default-roles-metroisjustabus",
+        "description": "${role_default-roles}",
+        "composite": true,
+        "composites": {
+          "realm": ["passageiro", "offline_access", "uma_authorization"]
+        }
+      }
+    ]
+  },
+  "defaultRole": {
+    "name": "default-roles-metroisjustabus"
+  },
+  "clients": [
+    {
+      "clientId": "web",
+      "name": "Web App MetroIsJustABus",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": true,
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": false,
+      "frontchannelLogout": true,
+      "fullScopeAllowed": true,
+      "rootUrl": "",
+      "redirectUris": ["http://localhost:5173/*", "http://10.17.0.189:8003/*"],
+      "webOrigins": ["http://localhost:5173", "http://10.17.0.189:8003"],
+      "attributes": {
+        "pkce.code.challenge.method": "S256",
+        "post.logout.redirect.uris": "http://localhost:5173/*##http://10.17.0.189:8003/*"
+      },
+      "defaultClientScopes": ["web-origins", "acr", "profile", "roles", "email", "basic"]
+    }
+  ],
+  "components": {
+    "org.keycloak.userprofile.UserProfileProvider": [
+      {
+        "providerId": "declarative-user-profile",
+        "subComponents": {},
+        "config": {
+          "kc.user.profile.config": [
+            "{\"attributes\":[{\"name\":\"username\",\"displayName\":\"${username}\",\"validations\":{\"length\":{\"min\":3,\"max\":255},\"username-prohibited-characters\":{},\"up-username-not-idn-homograph\":{}},\"permissions\":{\"view\":[\"admin\",\"user\"],\"edit\":[\"admin\",\"user\"]},\"multivalued\":false},{\"name\":\"email\",\"displayName\":\"${email}\",\"validations\":{\"email\":{},\"length\":{\"max\":255}},\"required\":{\"roles\":[\"user\"]},\"permissions\":{\"view\":[\"admin\",\"user\"],\"edit\":[\"admin\",\"user\"]},\"multivalued\":false},{\"name\":\"firstName\",\"displayName\":\"Nome\",\"validations\":{\"length\":{\"max\":255},\"person-name-prohibited-characters\":{}},\"required\":{\"roles\":[\"user\"]},\"permissions\":{\"view\":[\"admin\",\"user\"],\"edit\":[\"admin\",\"user\"]},\"multivalued\":false}],\"groups\":[{\"name\":\"user-metadata\",\"displayHeader\":\"User metadata\",\"displayDescription\":\"Attributes, which refer to user metadata\"}]}"
+          ]
+        }
+      }
+    ]
+  }
+}

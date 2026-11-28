@@ -17,7 +17,7 @@ MetroIsJustABus: sistema distribuído para uma rede urbana de autocarros (consul
 | Bilhetes | `services/bilhetes/` | 8001 | Tipos de bilhete, compra, estados, validação |
 | Notificações | `services/notificacoes/` | 8002 | Subscrições, preferências, envio de notificações |
 | Web App | `services/web/` | 5173 (dev) | React (SPA). Sem lógica de negócio: só chama as APIs |
-| Identidade | Keycloak | 8080 | Contas, login, papéis `passageiro` e `staff` |
+| Identidade | Keycloak | 8080 | Contas, login, papéis `passageiro`, `staff` e `administrador`. Realm em `deploy/dev/keycloak/` |
 | Broker | RabbitMQ | 5672 / 15672 | Eventos entre serviços |
 
 Regras da arquitetura:
