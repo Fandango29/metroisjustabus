@@ -51,6 +51,18 @@ services:
         condition: service_healthy
     restart: unless-stopped
 
+  web:
+    # Na pipeline, WEB_IMAGE aponta para a imagem do GHCR com o SHA do commit.
+    # nginx a servir a Web App (sem base de dados: só chama as APIs dos serviços).
+    image: ${WEB_IMAGE:-metroisjustabus-web:local}
+    build:
+      context: ../../services/web
+      args:
+        APP_COMMIT_SHA: ${APP_COMMIT_SHA:-local}
+    ports:
+      - "8003:8080"
+    restart: unless-stopped
+
   core-db:
     image: postgres:16
     environment:

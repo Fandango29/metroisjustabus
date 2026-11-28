@@ -5,7 +5,7 @@
 # Mesmo comportamento do deploy.ps1 (versão para Windows).
 #
 # Uso:
-#   ./deploy.sh --servico core|bilhetes|notificacoes --porta <n> --imagem <imagem> --sha <sha>
+#   ./deploy.sh --servico core|bilhetes|notificacoes|web --porta <n> --imagem <imagem> --sha <sha>
 #               [--simular-falha] [--tentativas <n>] [--intervalo <segundos>]
 
 set -euo pipefail
@@ -57,8 +57,8 @@ done
 [[ -n "$IMAGEM" ]] || erro "Falta a opção obrigatória --imagem."
 [[ -n "$SHA" ]] || erro "Falta a opção obrigatória --sha."
 case "$SERVICO" in
-    core | bilhetes | notificacoes) ;;
-    *) erro "Serviço inválido: '$SERVICO' (valores aceites: core, bilhetes, notificacoes)." ;;
+    core | bilhetes | notificacoes | web) ;;
+    *) erro "Serviço inválido: '$SERVICO' (valores aceites: core, bilhetes, notificacoes, web)." ;;
 esac
 e_inteiro "$PORTA" || erro "Porta inválida: '$PORTA' (tem de ser um número inteiro)."
 e_inteiro "$TENTATIVAS" || erro "Número de tentativas inválido: '$TENTATIVAS'."
