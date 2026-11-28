@@ -16,7 +16,7 @@ MetroIsJustABus: sistema distribuído para uma rede urbana de autocarros (consul
 | Core | `services/core/` | 8000 | Rede, linhas, paragens, horários, viagens, perturbações, lotação |
 | Bilhetes | `services/bilhetes/` | 8001 | Tipos de bilhete, compra, estados, validação |
 | Notificações | `services/notificacoes/` | 8002 | Subscrições, preferências, envio de notificações |
-| Web App | `services/web/` | 5173 (dev) | React (SPA). Sem lógica de negócio: só chama as APIs |
+| Web App | `services/web/` | 8003 (nginx no contentor; 5173 com `npm run dev`) | React (SPA). Sem lógica de negócio: só chama as APIs |
 | Identidade | Keycloak | 8080 | Contas, login, papéis `passageiro`, `staff` e `administrador`. Realm em `deploy/dev/keycloak/` |
 | Broker | RabbitMQ | 5672 / 15672 | Eventos entre serviços |
 
@@ -36,6 +36,7 @@ Regras da arquitetura:
 - Web App: React com Vite, ESLint, Playwright.
 - Docker com Dockerfile em três etapas (`base`, `teste`, `final`) e Docker Compose.
 - GitHub Actions com runners self-hosted; imagens no GHCR (`ghcr.io/fandango29/metroisjustabus-<serviço>`).
+- Web App: imagem final com nginx (`/health` e `/version` servidos pelo nginx); a pipeline usa os inputs `comando_lint` e `comando_testes` do `servico.yml` (`npm run lint`, `npm test`); os serviços Python usam os valores por omissão (`ruff check .`, `pytest -v`).
 - A pipeline (`servico.yml`) corre na VM Linux `metro-dev` (runner `[self-hosted, dev]`, `shell: bash`); o deploy de dev usa `deploy/dev/deploy.sh`. O `deploy/dev/deploy.ps1` mantém-se para uso em Windows.
 
 ## Comandos
