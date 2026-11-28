@@ -36,7 +36,8 @@ Regras da arquitetura:
 - Web App: React com Vite, ESLint, Playwright.
 - Docker com Dockerfile em três etapas (`base`, `teste`, `final`) e Docker Compose.
 - GitHub Actions com runners self-hosted; imagens no GHCR (`ghcr.io/fandango29/metroisjustabus-<serviço>`).
-- Web App: imagem final com nginx (`/health` e `/version` servidos pelo nginx); a pipeline usa os inputs `comando_lint` e `comando_testes` do `servico.yml` (`npm run lint`, `npm test`); os serviços Python usam os valores por omissão (`ruff check .`, `pytest -v`).
+- Web App: imagem final com nginx (`/health` e `/version` servidos pelo nginx); a pipeline usa os inputs `comando_lint` e `comando_testes` do `servico.yml` (`npm run lint`, `npm run test:cobertura`); os serviços Python usam os valores por omissão (`ruff check .`, `pytest -v --cov=app --cov-report=term-missing --cov-fail-under=70`).
+- Cobertura de testes (RNF-18): mínimo de 70% por serviço, medido pelo pytest-cov (pasta `app/`) e pelo Vitest (`@vitest/coverage-v8`, todo o `src/`, limites em `vite.config.js`). A pipeline falha abaixo do limite e põe a percentagem no resumo do job. Abaixo do limite acrescentam-se testes; não se baixa o limite nem se excluem ficheiros.
 - A pipeline (`servico.yml`) corre na VM Linux `metro-dev` (runner `[self-hosted, dev]`, `shell: bash`); o deploy de dev usa `deploy/dev/deploy.sh`. O `deploy/dev/deploy.ps1` mantém-se para uso em Windows.
 
 ## Comandos
@@ -46,7 +47,7 @@ Testes e lint de um serviço Python (exemplo para o Core), tal como a pipeline o
 ```bash
 docker build --target teste -t core-testes services/core
 docker run --rm core-testes ruff check .
-docker run --rm core-testes pytest -v
+docker run --rm core-testes pytest -v --cov=app --cov-report=term-missing --cov-fail-under=70
 ```
 
 Ambiente de dev completo:

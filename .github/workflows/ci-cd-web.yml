@@ -25,6 +25,6 @@ jobs:
       servico: web
       porta: 8003
       comando_lint: npm run lint
-      comando_testes: npm test
+      comando_testes: npm run test:cobertura
       simular_falha: ${{ inputs.simular_falha_smoke_test == true }}
     secrets: inherit
