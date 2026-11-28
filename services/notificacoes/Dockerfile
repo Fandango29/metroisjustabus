@@ -33,4 +33,5 @@ ENV APP_COMMIT_SHA=${APP_COMMIT_SHA}
 
 EXPOSE 8000
 
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Sem logs de acesso em texto: a linha de acesso em JSON é escrita pela app (RNF-12)
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--no-access-log"]

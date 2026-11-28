@@ -5,8 +5,12 @@ import os
 from fastapi import FastAPI, HTTPException
 
 from app import repositorio
+from app.observabilidade import MiddlewareCorrelacao, configurar_logs
+
+configurar_logs("core")
 
 app = FastAPI(title="MetroIsJustABus - Core", version="0.1.1")
+app.add_middleware(MiddlewareCorrelacao)
 
 
 @app.get("/health")

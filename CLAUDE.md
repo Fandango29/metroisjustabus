@@ -57,6 +57,34 @@ cd deploy/dev
 docker compose up -d --build
 ```
 
+## Logs e ID de correlação (RNF-12)
+
+Cada serviço Python chama `configurar_logs("<serviço>")` e `app.add_middleware(MiddlewareCorrelacao)` no `main.py` (módulo `app/observabilidade.py`). Todas as linhas de log saem no stdout em JSON numa só linha, com `timestamp` (UTC), `nivel`, `servico`, `logger`, `mensagem` e `correlation_id`. Cada pedido HTTP lê o cabeçalho `X-Correlation-ID` (ou gera um UUID), devolve-o na resposta e gera uma linha de acesso (`metodo`, `caminho`, `estado`, `duracao_ms`). Os logs de acesso em texto do uvicorn estão desligados.
+
+Escrever um log:
+
+```python
+import logging
+
+logger = logging.getLogger(__name__)
+logger.info("bilhete emitido", extra={"dados": {"bilhete_id": bilhete_id, "tipo": "OCASIONAL"}})
+```
+
+Só os campos em `extra={"dados": {...}}` entram na linha, além dos obrigatórios (não os podem substituir).
+
+Passar o ID de correlação a outro serviço:
+
+```python
+from app.observabilidade import CABECALHO, obter_correlation_id
+
+httpx.get(url, headers={CABECALHO: obter_correlation_id()})          # chamada REST
+mensagem = {"correlation_id": obter_correlation_id(), ...}           # evento no RabbitMQ
+```
+
+Nunca registar dados pessoais nem segredos (RNF-10, RNF-11): tokens, passwords, emails, cabeçalhos (`Authorization` incluído), corpos de pedidos ou respostas, query strings. O caminho na linha de acesso vai sem query string, e o `httpx` está em WARNING porque em INFO regista o URL completo.
+
+O `app/observabilidade.py` é uma cópia idêntica nos três serviços (o build de cada serviço só vê a sua pasta). Quem o alterar altera as três cópias, e os testes `tests/test_observabilidade.py`, iguais salvo `SERVICO`. Confirmar com `sha256sum services/*/app/observabilidade.py`.
+
 ## Convenções
 
 - Cada teste tem o ID do requisito no nome: `test_rf22_compra_bilhete_com_chave_repetida_nao_duplica`.

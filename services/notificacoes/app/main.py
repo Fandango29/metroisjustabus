@@ -4,7 +4,12 @@ import os
 
 from fastapi import FastAPI
 
+from app.observabilidade import MiddlewareCorrelacao, configurar_logs
+
+configurar_logs("notificacoes")
+
 app = FastAPI(title="MetroIsJustABus - Notificações", version="0.1.0")
+app.add_middleware(MiddlewareCorrelacao)
 
 
 @app.get("/health")
