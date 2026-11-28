@@ -12,6 +12,13 @@ on:
       simular_falha:
         type: boolean
         default: false
+      # Comandos corridos na imagem de testes. Por omissão, os dos serviços Python.
+      comando_lint:
+        type: string
+        default: ruff check .
+      comando_testes:
+        type: string
+        default: pytest -v
 
 env:
   IMAGEM: ghcr.io/fandango29/metroisjustabus-${{ inputs.servico }}
@@ -33,11 +40,11 @@ jobs:
       - name: Instalar dependências (imagem de testes)
         run: docker build --target teste -t ${{ env.IMAGEM_TESTES }} ${{ env.PASTA }}
 
-      - name: Lint (ruff)
-        run: docker run --rm ${{ env.IMAGEM_TESTES }} ruff check .
+      - name: Lint (${{ inputs.comando_lint }})
+        run: docker run --rm ${{ env.IMAGEM_TESTES }} ${{ inputs.comando_lint }}
 
-      - name: Testes (pytest)
-        run: docker run --rm ${{ env.IMAGEM_TESTES }} pytest -v
+      - name: Testes (${{ inputs.comando_testes }})
+        run: docker run --rm ${{ env.IMAGEM_TESTES }} ${{ inputs.comando_testes }}
 
       - name: Remover imagem de testes
         if: always()
