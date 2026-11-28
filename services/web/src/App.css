@@ -1,0 +1,40 @@
+/* Desenhado primeiro para ecrãs de 360 px de largura (RNF-19); os ecrãs maiores só
+   ganham margens. Nenhum elemento tem largura fixa. */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: #1a1a1a;
+  background: #ffffff;
+}
+
+.ecra-inicial {
+  padding: 1.5rem 1rem;
+}
+
+.ecra-inicial h1 {
+  margin: 0 0 0.75rem;
+  font-size: 1.75rem;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+.ecra-inicial p {
+  margin: 0;
+}
+
+@media (min-width: 768px) {
+  .ecra-inicial {
+    max-width: 48rem;
+    margin: 0 auto;
+    padding: 3rem 2rem;
+  }
+}
